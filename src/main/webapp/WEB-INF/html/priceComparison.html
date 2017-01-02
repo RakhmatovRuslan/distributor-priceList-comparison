@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorator="base_layout">
+<head>
+    <title>Сравнение цен</title>
+</head>
+<body>
+<div layout:fragment="content" ng-app="price_comparison_app" ng-controller="price_comparison_controller">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Сравнение цен товаров разных поставщиков</h3>
+        </div>
+        <div class="panel-body">
+                <div class="col-lg-8 col-lg-offset-2" style="margin-bottom: 10px;">
+                    <div class="input-group">
+                        <input type="text" class="form-control" ng-model="query" placeholder="Поиск номенклатуры..." />
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button" ng-click="getNomenclaturePrices(query)">Поиск</button>
+                         </span>
+                    </div><!-- /input-group -->
+                </div><!-- /.col-lg-6 -->
+            <div class="col-lg-6">
+                <div class="list-group">
+                    <a href="#" class="list-group-item disabled">
+                        Номенклатура
+                    </a>
+                    <a href="#" ng-repeat="nomenclature in nomenclatures | filter:query"
+                       ng-click="getNomenclaturePrices(nomenclature.name)"
+                       class="list-group-item">{{nomenclature.id}}-{{nomenclature.name}}</a>
+                </div>
+            </div>
+            <div class="col-lg-6" >
+                <div class="list-group" >
+                    <a ng-repeat="distributor in distributors" href="#" class="list-group-item">
+                        Поставщик - {{distributor.name}} <br/>
+                        Название - {{distributor.item.name}} <br/>
+                        Цена - {{distributor.item.price}} <br/>
+                        Срок годности - {{distributor.item.expireDate}}<br/>
+                        Производитель - {{distributor.item.producer}}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="additionalScriptsLib">
+    <script src="../../resources/js/controllers/PriceComparisonController.js"></script>
+</th:block>
+</body>
+</html>

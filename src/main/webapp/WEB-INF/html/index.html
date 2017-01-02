@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      layout:decorator="base_layout">
+
+<head>
+    <title>Добро пожаловать</title>
+</head>
+
+<body>
+<div layout:fragment="content" ng-app="nomenclature_app" ng-controller="nomenclature_controller">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Моя номеклатура</h3>
+        </div>
+        <div class="panel-body">
+            <div class="row" style="margin-left: 15px; margin-top: 10px; ">
+                <div class="col-lg-11">
+                    <div class="input-group">
+                        <input class="form-control" placeholder="Название.." type="text" ng-model="nomenclatureName"
+                               required="required" min="1"/>
+                        <span class="input-group-btn">
+                        <button class="btn btn-primary" ng-disabled="!nomenclatureName"
+                                ng-click="addNomenclature(nomenclatureName)">Добавить номенклатуру</button>
+                    </span>
+                    </div><!-- /input-group -->
+                    <span class="label label-danger" ng-bind="message"></span>
+                </div><!-- /.col-lg-6 -->
+            </div>
+            <h3>Номенклатура</h3>
+            <table class="table table-condensed table-striped">
+                <thead>
+                <tr>
+                    <th width="50">№</th>
+                    <th width="700">Название</th>
+                    <th >Редак.</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="nomenclature in nomenclatures">
+                    <!--<td  style="width:70px;text-align:center;"><button class="btn btn-mini btn-danger" ng-click="removeCar(car)">Remove</button></td>-->
+                    <td>{{nomenclature.id}}</td>
+                    <td>{{nomenclature.name}}</td>
+                    <td>
+                        <button type="button" class="btn btn-default btn-sx"
+                                ng-click="removeNomenclature(nomenclature)">
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                            Удалить
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+                <tr ng-show="nomenclatures.length == 0" class="info">
+                    <td colspan="3">
+                        Номенклатур не найдено
+                    </td>
+                </tr>
+                <tr ng-show="nomenclatures.length >1">
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <button  class="btn btn-danger"
+                                ng-show="nomenclatures.length > 1"
+                                ng-click="removeAllNomenclatures()">Удалить все
+                        </button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="additionalScriptsLib">
+    <script src="../../resources/js/controllers/NomenclatureController.js"></script>
+</th:block>
+</body>
+</html>
