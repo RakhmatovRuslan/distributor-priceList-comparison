@@ -14,7 +14,7 @@
         <div class="panel-body">
             <form method="post" action="/distributor/upload" enctype="multipart/form-data">
                 <label class="btn btn-large btn-primary">
-                    Выберите прайслист <input name="file" type="file" ng-click="enableUpload(true)" ng-model="file" style="display: none;"/>
+                    Выберите прайслист <input name="file" type="file" ng-click="enableUpload(true)" ng-model="file"/>
                 </label>
                 <input class="btn btn-large btn-primary" type="submit" value="Загрузить" ng-disabled="!uploaded" />
                 <a class="btn btn-large btn-success" th:href="@{/download/template}"  >Скачать шаблон</a>
@@ -64,6 +64,9 @@
 
                 </tbody>
             </table>
+            <form th:action="@{/download/comparisonResult}" method="get">
+                <input class="btn btn-large btn-success" type="submit" ng-disabled="!(distributors.length > 0)" value="Скачать результат сравнений"  />
+            </form>
         </div>
     </div>
 </div>

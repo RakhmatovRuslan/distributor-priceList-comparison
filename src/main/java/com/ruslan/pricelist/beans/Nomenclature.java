@@ -1,5 +1,7 @@
 package com.ruslan.pricelist.beans;
 
+import com.ruslan.pricelist.utility.StringComparisonUtility;
+
 /**
  * Created by Ruslan on 12/30/2016.
  */
@@ -38,7 +40,7 @@ public class Nomenclature {
 
         Nomenclature that = (Nomenclature) o;
 
-        return name != null ? name.equals(that.name) : that.name == null;
+        return StringComparisonUtility.isItemsSame(name,that.name);
 
     }
 

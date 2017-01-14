@@ -15,6 +15,6 @@ public class IndexController {
 
     @RequestMapping
     public String getIndexPage() {
-        return "index";
+        return "distributor";
     }
 }

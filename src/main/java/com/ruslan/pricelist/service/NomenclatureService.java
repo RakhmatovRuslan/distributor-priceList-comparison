@@ -1,5 +1,6 @@
 package com.ruslan.pricelist.service;
 
+import com.ruslan.pricelist.beans.Distributor;
 import com.ruslan.pricelist.beans.Nomenclature;
 
 import java.io.IOException;
@@ -16,4 +17,7 @@ public interface NomenclatureService {
     void removeNomenclature(Nomenclature nomenclature);
 
     void removeAllNomenclatures();
+
+    void generateNomenclaturesByPriceLists(List<Distributor> allDistributors);
+
 }

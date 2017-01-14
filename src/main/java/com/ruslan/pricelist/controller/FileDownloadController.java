@@ -1,5 +1,10 @@
 package com.ruslan.pricelist.controller;
 
+import com.ruslan.pricelist.service.FileStorageService;
+import com.ruslan.pricelist.service.NomenclatureService;
+import com.ruslan.pricelist.service.PriceComparisonService;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +23,12 @@ import java.io.InputStream;
 @Controller
 @RequestMapping("/download")
 public class FileDownloadController {
-
+    @Autowired
+    PriceComparisonService comparisonService;
+    @Autowired
+    NomenclatureService nomenclatureService;
+    @Autowired
+    FileStorageService fileStorageService;
 
     @RequestMapping(value = "/{file_name}", method = RequestMethod.GET)
     public void getFile(
@@ -28,6 +38,11 @@ public class FileDownloadController {
             response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             StringBuffer dataDirectory = new StringBuffer(request.getServletContext().getRealPath("/WEB-INF/downloads/"));
             File file = new File(dataDirectory.append(fileName).append(".xlsx").toString());
+            //check whether the request for comparison sheet
+            if(fileName.equals("comparisonResult")){
+                nomenclatureService.generateNomenclaturesByPriceLists(fileStorageService.getAllDistributors());
+                comparisonService.generateDistributorsPriceListComparison(nomenclatureService.getNomenclatures(),fileStorageService.getAllDistributors(),file);
+            }
             // get your file as InputStream
             if(file.exists()){
                 InputStream is = new FileInputStream(file);;
@@ -37,7 +52,10 @@ public class FileDownloadController {
             }
         } catch (IOException ex) {
             throw new RuntimeException("IOError writing file to output stream");
+        } catch (InvalidFormatException e) {
+            e.printStackTrace();
         }
 
     }
+
 }
