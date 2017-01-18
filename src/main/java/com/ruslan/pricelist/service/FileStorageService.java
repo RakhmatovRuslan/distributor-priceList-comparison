@@ -1,6 +1,7 @@
 package com.ruslan.pricelist.service;
 
 import com.ruslan.pricelist.beans.Distributor;
+import com.ruslan.pricelist.beans.Message;
 import com.ruslan.pricelist.exception.DistributorFileParsingException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,7 +17,7 @@ public interface FileStorageService {
      * Distributors price list .xlsx file parsing and storing in database
      * Arguments: MultipartFile uploaded by user (extension mest be .xlsx while storing)
      */
-     void storeFile(MultipartFile file) throws IOException, DistributorFileParsingException, InvalidFormatException;
+     Message storeFile(MultipartFile file) throws IOException, DistributorFileParsingException, InvalidFormatException;
 
     List<Distributor> getAllDistributors();
 

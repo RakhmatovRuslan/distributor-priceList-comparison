@@ -67,24 +67,25 @@ public class ExcelTemplateParser {
                             , itemProducer
                     );
                 } catch (NullPointerException ex) {
-                    if (itemName == null || itemName.length() == 0) {
-                        throw new DistributorFileParsingException("Название номенклатуры на " + row.getRowNum() + " строке пустой, пожалуйста заполните все данные и загрузите файл снова!");
+                    if (itemName == null) {
+                        throw new DistributorFileParsingException("Название номенклатуры на " + row.getRowNum() + " строке пустой, пожалуйста заполните все данные и загрузите "+distributorFile.getName()+" файл снова!");
                     } else if (itemPrice == null) {
-                        throw new DistributorFileParsingException("Цена продукта на " + row.getRowNum() + " строке пустой, пожалуйста заполните все данные и загрузите файл снова!");
+                        throw new DistributorFileParsingException("Цена продукта на " + row.getRowNum() + " строке пустой, пожалуйста заполните все данные и загрузите "+distributorFile.getName()+"  файл снова!");
                     }else {
-                        throw new DistributorFileParsingException("Файл содержит пустые ячейки на "+row.getRowNum()+" строке, пожалуйста заполните все данные и загрузите файл снова!");
+                       throw new DistributorFileParsingException("Файл содержит пустые ячейки на "+row.getRowNum()+" строке, пожалуйста заполните все данные и загрузите "+distributorFile.getName()+"  файл снова!");
                     }
                 }
-
-                if (!items.contains(item))
-                    items.add(item);
+                if(item.getName().length() != 0){
+                    if (!items.contains(item))
+                        items.add(item);
+                }
                 rowNumber++;
             } else {
                 break;
             }
         } while (true);
         if (items.size() == 0)
-            throw new DistributorFileParsingException("Файл пустой, пожалуйста заполните все данные и загрузите файл снова!");
+            throw new DistributorFileParsingException( distributorFile.getName()+" пустой, пожалуйста заполните все данные и загрузите файл снова!");
         distributor = new Distributor(distributorName, items);
         return distributor;
     }

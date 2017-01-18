@@ -6,7 +6,7 @@
     <title>Поставщика</title>
 </head>
 <body>
-<div layout:fragment="content" ng-app="distributor_app" ng-controller="distributor_controller" >
+<div layout:fragment="content" ng-app="distributor_app" ng-controller="distributor_controller">
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Поставщики</h3>
@@ -14,12 +14,12 @@
         <div class="panel-body">
             <form method="post" action="/distributor/upload" enctype="multipart/form-data">
                 <label class="btn btn-large btn-primary">
-                    Выберите прайслист <input name="file" type="file" ng-click="enableUpload(true)" ng-model="file"/>
+                    Выберите прайслист <input name="files" type="file" ng-click="enableUpload(true)" style="display: none;" multiple="multiple" accept=".xls, .xlsx"/>
                 </label>
                 <input class="btn btn-large btn-primary" type="submit" value="Загрузить" ng-disabled="!uploaded" />
                 <a class="btn btn-large btn-success" th:href="@{/download/template}"  >Скачать шаблон</a>
-                <div  ng-show="!removed" th:if="${message}">
-                    <span class="label" th:classappend="${success} ? label-success : label-danger" th:text="${message}"></span>
+                <div  ng-show="!removed" th:each="message : ${messages}">
+                    <span class="label" th:classappend="${message.success} ? label-success : label-danger" th:text="${message.content}"></span>
                 </div>
             </form>
             <table class="table table-hover">
@@ -64,8 +64,8 @@
 
                 </tbody>
             </table>
-            <form th:action="@{/download/comparisonResult}" method="get">
-                <input class="btn btn-large btn-success" type="submit" ng-disabled="!(distributors.length > 0)" value="Скачать результат сравнений"  />
+            <form th:action="@{/download/comparison}" method="post">
+                <input class="btn btn-large btn-success" type="submit" ng-disabled="!(distributors.length > 0)" value="Скачать результат сравнений" ng-click="clearMessages()" />
             </form>
         </div>
     </div>

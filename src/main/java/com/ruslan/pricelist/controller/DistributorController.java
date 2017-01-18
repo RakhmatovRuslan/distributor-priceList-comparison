@@ -1,13 +1,17 @@
 package com.ruslan.pricelist.controller;
 
 import com.ruslan.pricelist.beans.Distributor;
+import com.ruslan.pricelist.beans.Message;
 import com.ruslan.pricelist.service.FileStorageService;
+import com.ruslan.pricelist.utility.FileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -43,16 +47,19 @@ public class DistributorController {
     }
 
     @RequestMapping("/upload")
-    public String handleFileUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
-
+    public String handleFileUpload(@RequestParam("files") MultipartFile files[], RedirectAttributes redirectAttributes) {
+        ArrayList<Message> messages = new ArrayList<>();
         try {
-            fileStorageService.storeFile(file);
-            redirectAttributes.addFlashAttribute("message",
-                    "Вы успешно загрузили файл " + file.getOriginalFilename() + "!");
-            redirectAttributes.addFlashAttribute("success",true);
+            if(files.length == 0)
+                throw new IllegalArgumentException("Вы не загрузили ни одного файла!");
+
+            for (MultipartFile file : files) {
+                messages.add(fileStorageService.storeFile(file));
+            }
+            redirectAttributes.addFlashAttribute("messages",messages);
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("message", e.getMessage());
-            redirectAttributes.addFlashAttribute("danger", true);
+            messages.add(new Message(e.getMessage(),false));
+            redirectAttributes.addFlashAttribute("messages", messages);
         }
 
         return "redirect:/distributor";

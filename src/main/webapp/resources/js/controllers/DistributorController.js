@@ -27,6 +27,10 @@ angular.module('distributor_app', [])
             });
         };
 
+        $scope.clearMessages = function(){
+            $scope.removed = true;
+        }
+
         $scope.fetchDistributorsList();
 
 
