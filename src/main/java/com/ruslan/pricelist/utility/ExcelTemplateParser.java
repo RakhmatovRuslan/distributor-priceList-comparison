@@ -60,6 +60,8 @@ public class ExcelTemplateParser {
                     itemPrice = row.getCell(1).getNumericCellValue();
                     itemExpireDate = row.getCell(2).getDateCellValue();
                     itemProducer = row.getCell(3).getStringCellValue();
+//                    if(itemName == null && itemPrice==null)
+//                        continue;
                     item = new Item(
                             itemName
                             , itemPrice
@@ -67,15 +69,15 @@ public class ExcelTemplateParser {
                             , itemProducer
                     );
                 } catch (NullPointerException ex) {
-                    if(itemName == null && itemPrice==null)
-                        break;
-                    if (itemName == null) {
-                        throw new DistributorFileParsingException("Название номенклатуры на " + row.getRowNum() + " строке пустой, пожалуйста заполните все данные и загрузите "+distributorFile.getName()+" файл снова!");
-                    } else if (itemPrice == null) {
-                        throw new DistributorFileParsingException("Цена продукта на " + row.getRowNum() + " строке пустой, пожалуйста заполните все данные и загрузите "+distributorFile.getName()+"  файл снова!");
-                    }else {
-                       throw new DistributorFileParsingException("Файл содержит пустые ячейки на "+row.getRowNum()+" строке, пожалуйста заполните все данные и загрузите "+distributorFile.getName()+"  файл снова!");
-                    }
+                    rowNumber++;
+                    continue;
+//                    if (itemName == null) {
+//                        throw new DistributorFileParsingException("Название номенклатуры на " + row.getRowNum() + " строке пустой, пожалуйста заполните все данные и загрузите "+distributorFile.getName()+" файл снова!");
+//                    } else if (itemPrice == null) {
+//                        throw new DistributorFileParsingException("Цена продукта на " + row.getRowNum() + " строке пустой, пожалуйста заполните все данные и загрузите "+distributorFile.getName()+"  файл снова!");
+//                    }else {
+//                       throw new DistributorFileParsingException("Файл содержит пустые ячейки на "+row.getRowNum()+" строке, пожалуйста заполните все данные и загрузите "+distributorFile.getName()+"  файл снова!");
+//                    }
                 }
                 if(item.getName().length() != 0){
                     if (!items.contains(item))
