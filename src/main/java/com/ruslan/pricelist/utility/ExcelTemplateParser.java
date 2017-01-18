@@ -67,6 +67,8 @@ public class ExcelTemplateParser {
                             , itemProducer
                     );
                 } catch (NullPointerException ex) {
+                    if(itemName == null && itemPrice==null)
+                        break;
                     if (itemName == null) {
                         throw new DistributorFileParsingException("Название номенклатуры на " + row.getRowNum() + " строке пустой, пожалуйста заполните все данные и загрузите "+distributorFile.getName()+" файл снова!");
                     } else if (itemPrice == null) {
