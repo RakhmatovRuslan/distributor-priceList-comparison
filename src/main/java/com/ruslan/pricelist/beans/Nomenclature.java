@@ -5,7 +5,7 @@ import com.ruslan.pricelist.utility.StringComparisonUtility;
 /**
  * Created by Ruslan on 12/30/2016.
  */
-public class Nomenclature {
+public class Nomenclature implements Comparable<Nomenclature>{
     private Long id;
     private String name;
 
@@ -40,7 +40,7 @@ public class Nomenclature {
 
         Nomenclature that = (Nomenclature) o;
 
-        return StringComparisonUtility.isItemsSame(name,that.name);
+        return StringComparisonUtility.isSame(name,that.name);
 
     }
 
@@ -57,5 +57,10 @@ public class Nomenclature {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Nomenclature o) {
+        return this.name.compareTo(o.getName());
     }
 }

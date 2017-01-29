@@ -35,13 +35,13 @@ public class NomenclatureServiceImpl implements NomenclatureService {
 
     @Override
     public void addNomenclature(Nomenclature nomenclature) {
-        if(nomenclatures.contains(nomenclature))
-            throw new IllegalArgumentException("Такая номенклатура уже существует в списке!");
-        try {
-            NomenclatureParser.addNewNomenclature(nomenclature.getName());
-            nomenclatures.add(nomenclature);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if(!this.nomenclatures.contains(nomenclature)){
+            try {
+                NomenclatureParser.addNewNomenclature(nomenclature.getName());
+                nomenclatures.add(nomenclature);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -57,22 +57,18 @@ public class NomenclatureServiceImpl implements NomenclatureService {
     }
 
     @Override
-    public void generateNomenclaturesByPriceLists(List<Distributor> allDistributors) {
-        try{
-            if(nomenclatures != null )
+    public void generateNomenclaturesByPriceLists(List<Distributor> allDistributors) throws Exception {
+            if (nomenclatures != null)
                 removeAllNomenclatures();
-            getNomenclatures();
-            Set<Nomenclature> hashSet = new LinkedHashSet<>();
+            else
+                nomenclatures = new ArrayList<>();
+            nomenclatures.clear();
 
             for (Distributor distributor : allDistributors) {
-                hashSet.addAll(converter(distributor.getPriceList()));
+                nomenclatures.addAll(converter(distributor.getPriceList()));
             }
-            hashSet.forEach(this::addNomenclature);
-        }catch (IllegalArgumentException ex){
-            // implement logging
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            nomenclatures.forEach(this::addNomenclature);
+
     }
 
     private List<Nomenclature> converter(List<Item> items){

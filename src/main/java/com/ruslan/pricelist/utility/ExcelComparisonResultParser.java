@@ -22,6 +22,8 @@ public class ExcelComparisonResultParser {
 
     public void generateExcel(List<Nomenclature> nomenclaturesFromFile, List<Distributor> allDistributors, File newFile) throws IOException, InvalidFormatException {
         newFile.deleteOnExit();
+        Collections.sort(nomenclaturesFromFile);
+
         if (!newFile.createNewFile()) {
 
             workbook = new XSSFWorkbook();
@@ -59,7 +61,7 @@ public class ExcelComparisonResultParser {
                 //---------Nomenclature id----------------
                 cell = row.createCell(cellNumber);
                 cell.setCellStyle(createStyles().get("nomenclature"));
-                cell.setCellValue(nomenclature.getId());
+                cell.setCellValue(rowNumber);
                 cellNumber++;
                 //---------Nomenclature name---------------
                 cell = row.createCell(cellNumber, CellType.STRING);
@@ -123,8 +125,8 @@ public class ExcelComparisonResultParser {
             //------------------------------content----------------------------------------------------------
             FileOutputStream fout = new FileOutputStream(newFile);
             workbook.write(fout);
-            fout.close();
             workbook.close();
+            fout.close();
         }
     }
 

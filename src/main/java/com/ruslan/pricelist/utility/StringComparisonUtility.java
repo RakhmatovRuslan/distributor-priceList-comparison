@@ -24,10 +24,10 @@ public class StringComparisonUtility {
         }
         return costs[b.length()];
     }
-
-    public static boolean isItemsSame(String nomenclatureName, String itemName) {
+    //
+    public static boolean isSame(String nomenclatureName, String itemName) {
         //TODO make difference coefficient configurable
-        Double diffCoefficient = 10.0;
+        Double diffCoefficient = 25.0;
         int levenchteinDistance = levenshteinDistance(nomenclatureName, itemName);
         double difference = 0.0;
         if (itemName.length() >= levenchteinDistance) {
@@ -36,7 +36,14 @@ public class StringComparisonUtility {
             difference = 100 * levenchteinDistance / itemName.length();
         }
         if (difference <= diffCoefficient)
+        {
+            String numberOnly1 = nomenclatureName.replaceAll("[^0-9]", "");
+            System.out.println(numberOnly1);
+            String numberOnly2 = itemName.replaceAll("[^0-9]", "");
+
+            if (numberOnly1.equals(numberOnly2))
             return true;
+        }
 
         return false;
     }

@@ -4,7 +4,6 @@ import com.ruslan.pricelist.beans.Distributor;
 import com.ruslan.pricelist.beans.Item;
 import com.ruslan.pricelist.beans.Nomenclature;
 import com.ruslan.pricelist.utility.ExcelComparisonResultParser;
-import com.ruslan.pricelist.utility.NomenclatureParser;
 import com.ruslan.pricelist.utility.StringComparisonUtility;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +27,7 @@ public class PriceComparisonServiceImpl implements PriceComparisonService {
         List<Distributor> distributorsPrices = new ArrayList<>();
         for (Distributor distributor : distributors) {
             for (Item item : distributor.getPriceList()) {
-                if(StringComparisonUtility.isItemsSame(nomenclatureName,item.getName())){
+                if(StringComparisonUtility.isSame(nomenclatureName,item.getName())){
                     distributor.setItem(item);
                     distributorsPrices.add(distributor);
                     break;

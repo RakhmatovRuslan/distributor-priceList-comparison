@@ -42,7 +42,7 @@ public class ExcelTemplateParser {
     public Distributor parseDistributorFile(File distributorFile) throws IOException, InvalidFormatException, DistributorFileParsingException {
         Distributor distributor = null;
         Item item = null;
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yy");
         List<Item> items = new ArrayList<>();
         // Parsing excel file
         Workbook workbook = WorkbookFactory.create(distributorFile);
@@ -58,32 +58,42 @@ public class ExcelTemplateParser {
                 Double itemPrice = null;
                 Date itemExpireDate = null;
                 String itemProducer = null;
-                
-                try {
-                    itemName = row.getCell(0).getStringCellValue();
-                    itemPrice = row.getCell(1).getNumericCellValue();
-                    itemProducer = row.getCell(3).getStringCellValue();
 
-                    CellType cellType =  row.getCell(2).getCellTypeEnum();
-                    switch (cellType){
-                        case STRING :
-                          itemExpireDate = simpleDateFormat.parse(row.getCell(2).getStringCellValue());
+                try {
+                    CellType cellType;
+
+                    itemName = row.getCell(0).getStringCellValue();
+                    cellType = row.getCell(1).getCellTypeEnum();
+                    switch (cellType) {
+                        case STRING:
+                            itemPrice = Double.valueOf(row.getCell(1).getStringCellValue().split(",")[0].replaceAll("[^0-9]", ""));
                             break;
                         default:
-                             itemExpireDate = row.getCell(2).getDateCellValue();
+                            itemPrice = row.getCell(1).getNumericCellValue();
+                    }
+
+                    itemProducer = row.getCell(3).getStringCellValue();
+
+                    cellType = row.getCell(2).getCellTypeEnum();
+                    switch (cellType) {
+                        case STRING:
+                            itemExpireDate = simpleDateFormat.parse(row.getCell(2).getStringCellValue());
+                            break;
+                        default:
+                            itemExpireDate = row.getCell(2).getDateCellValue();
                     }
 
                 } catch (NullPointerException ex) {
-                    if(itemName == null && itemPrice==null)
-                        break;
-                    if (itemName == null) {
-                        throw new DistributorFileParsingException("Название номенклатуры на " + row.getRowNum() + " строке пустой, пожалуйста заполните все данные и загрузите "+distributorFile.getName()+" файл снова!");
-                    } else if (itemPrice == null) {
-                        throw new DistributorFileParsingException("Цена продукта на " + row.getRowNum() + " строке пустой, пожалуйста заполните все данные и загрузите "+distributorFile.getName()+"  файл снова!");
-                    }else {
-                       throw new DistributorFileParsingException("Файл содержит пустые ячейки на "+row.getRowNum()+" строке, пожалуйста заполните все данные и загрузите "+distributorFile.getName()+"  файл снова!");
-                    }
-                } catch (IllegalStateException ex){
+                    rowNumber++;
+                    continue;
+//                    if (itemName == null) {
+//                        throw new DistributorFileParsingException("Название номенклатуры на " + row.getRowNum() + " строке пустой, пожалуйста заполните все данные и загрузите "+distributorFile.getName()+" файл снова!");
+//                    } else if (itemPrice == null) {
+//                        throw new DistributorFileParsingException("Цена продукта на " + row.getRowNum() + " строке пустой, пожалуйста заполните все данные и загрузите "+distributorFile.getName()+"  файл снова!");
+//                    }else {
+//                       throw new DistributorFileParsingException("Файл содержит пустые ячейки на "+row.getRowNum()+" строке, пожалуйста заполните все данные и загрузите "+distributorFile.getName()+"  файл снова!");
+//                    }
+                } catch (IllegalStateException ex) {
                     System.out.println(ex.getMessage());
                 } catch (ParseException e) {
                     itemExpireDate = null;
@@ -95,9 +105,8 @@ public class ExcelTemplateParser {
                         , itemExpireDate
                         , itemProducer
                 );
-                if(item.getName().length() != 0){
-                    if (!items.contains(item))
-                        items.add(item);
+                if (item.getName().length() != 0) {
+                    items.add(item);
                 }
                 rowNumber++;
             } else {
@@ -105,7 +114,7 @@ public class ExcelTemplateParser {
             }
         } while (true);
         if (items.size() == 0)
-            throw new DistributorFileParsingException( distributorFile.getName()+" пустой, пожалуйста заполните все данные и загрузите файл снова!");
+            throw new DistributorFileParsingException(distributorFile.getName() + " пустой, пожалуйста заполните все данные и загрузите файл снова!");
         distributor = new Distributor(distributorName, items);
         return distributor;
     }

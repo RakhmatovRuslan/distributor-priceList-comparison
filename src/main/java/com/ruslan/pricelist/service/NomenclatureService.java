@@ -18,6 +18,6 @@ public interface NomenclatureService {
 
     void removeAllNomenclatures();
 
-    void generateNomenclaturesByPriceLists(List<Distributor> allDistributors);
+    void generateNomenclaturesByPriceLists(List<Distributor> allDistributors) throws Exception;
 
 }

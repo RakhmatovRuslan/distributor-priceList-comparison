@@ -2,7 +2,6 @@ package com.ruslan.pricelist.beans;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruslan.pricelist.utility.StringComparisonUtility;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -79,7 +78,7 @@ public class Item {
 
         Item item = (Item) o;
 
-        return StringComparisonUtility.isItemsSame(name,item.name);
+        return StringComparisonUtility.isSame(name,item.name);
 
     }
 

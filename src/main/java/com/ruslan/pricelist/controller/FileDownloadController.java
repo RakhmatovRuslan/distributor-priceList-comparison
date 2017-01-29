@@ -67,6 +67,8 @@ public class FileDownloadController {
             e.printStackTrace();
         } catch (InvalidFormatException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }
