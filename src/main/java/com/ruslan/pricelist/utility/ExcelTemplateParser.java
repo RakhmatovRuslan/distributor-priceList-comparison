@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -40,6 +42,7 @@ public class ExcelTemplateParser {
     public Distributor parseDistributorFile(File distributorFile) throws IOException, InvalidFormatException, DistributorFileParsingException {
         Distributor distributor = null;
         Item item = null;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
         List<Item> items = new ArrayList<>();
         // Parsing excel file
         Workbook workbook = WorkbookFactory.create(distributorFile);
@@ -55,30 +58,43 @@ public class ExcelTemplateParser {
                 Double itemPrice = null;
                 Date itemExpireDate = null;
                 String itemProducer = null;
+                
                 try {
                     itemName = row.getCell(0).getStringCellValue();
                     itemPrice = row.getCell(1).getNumericCellValue();
-                    itemExpireDate = row.getCell(2).getDateCellValue();
                     itemProducer = row.getCell(3).getStringCellValue();
-//                    if(itemName == null && itemPrice==null)
-//                        continue;
-                    item = new Item(
-                            itemName
-                            , itemPrice
-                            , itemExpireDate
-                            , itemProducer
-                    );
+
+                    CellType cellType =  row.getCell(2).getCellTypeEnum();
+                    switch (cellType){
+                        case STRING :
+                          itemExpireDate = simpleDateFormat.parse(row.getCell(2).getStringCellValue());
+                            break;
+                        default:
+                             itemExpireDate = row.getCell(2).getDateCellValue();
+                    }
+
                 } catch (NullPointerException ex) {
-                    rowNumber++;
-                    continue;
-//                    if (itemName == null) {
-//                        throw new DistributorFileParsingException("Название номенклатуры на " + row.getRowNum() + " строке пустой, пожалуйста заполните все данные и загрузите "+distributorFile.getName()+" файл снова!");
-//                    } else if (itemPrice == null) {
-//                        throw new DistributorFileParsingException("Цена продукта на " + row.getRowNum() + " строке пустой, пожалуйста заполните все данные и загрузите "+distributorFile.getName()+"  файл снова!");
-//                    }else {
-//                       throw new DistributorFileParsingException("Файл содержит пустые ячейки на "+row.getRowNum()+" строке, пожалуйста заполните все данные и загрузите "+distributorFile.getName()+"  файл снова!");
-//                    }
+                    if(itemName == null && itemPrice==null)
+                        break;
+                    if (itemName == null) {
+                        throw new DistributorFileParsingException("Название номенклатуры на " + row.getRowNum() + " строке пустой, пожалуйста заполните все данные и загрузите "+distributorFile.getName()+" файл снова!");
+                    } else if (itemPrice == null) {
+                        throw new DistributorFileParsingException("Цена продукта на " + row.getRowNum() + " строке пустой, пожалуйста заполните все данные и загрузите "+distributorFile.getName()+"  файл снова!");
+                    }else {
+                       throw new DistributorFileParsingException("Файл содержит пустые ячейки на "+row.getRowNum()+" строке, пожалуйста заполните все данные и загрузите "+distributorFile.getName()+"  файл снова!");
+                    }
+                } catch (IllegalStateException ex){
+                    System.out.println(ex.getMessage());
+                } catch (ParseException e) {
+                    itemExpireDate = null;
+                    System.out.println(e.getMessage());
                 }
+                item = new Item(
+                        itemName
+                        , itemPrice
+                        , itemExpireDate
+                        , itemProducer
+                );
                 if(item.getName().length() != 0){
                     if (!items.contains(item))
                         items.add(item);
