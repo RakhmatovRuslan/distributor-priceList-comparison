@@ -1,9 +1,6 @@
 package com.ruslan.pricelist.beans;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruslan.pricelist.utility.StringComparisonUtility;
-
-import java.util.Date;
 
 /**
  * Created by Ruslan on 12/29/2016.
@@ -11,14 +8,13 @@ import java.util.Date;
 public class Item {
     private String name;
     private Double price;
-    @JsonFormat(pattern="dd-MM-yyyy")
-    private Date expireDate;
+    private String expireDate;
     private String producer;
 
     public Item() {
     }
 
-    public Item(String name, Double price, Date expireDate, String producer) {
+    public Item(String name, Double price, String expireDate, String producer) {
         this.name = name;
         this.price = price;
         this.expireDate = expireDate;
@@ -45,11 +41,11 @@ public class Item {
         this.price = price;
     }
 
-    public Date getExpireDate() {
+    public String getExpireDate() {
         return expireDate;
     }
 
-    public void setExpireDate(Date expireDate) {
+    public void setExpireDate(String expireDate) {
         this.expireDate = expireDate;
     }
 

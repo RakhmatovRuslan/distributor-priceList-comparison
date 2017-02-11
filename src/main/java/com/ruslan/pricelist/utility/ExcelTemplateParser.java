@@ -9,10 +9,9 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -45,6 +44,8 @@ public class ExcelTemplateParser {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yy");
         List<Item> items = new ArrayList<>();
         // Parsing excel file
+        DataFormatter dataFormatter = new DataFormatter();
+        dataFormatter.addFormat("#####.##_",new DecimalFormat());
         Workbook workbook = WorkbookFactory.create(distributorFile);
         Sheet sheet = workbook.getSheetAt(0);
         String distributorName = (sheet.getRow(0).getCell(2).getStringCellValue());
@@ -56,48 +57,20 @@ public class ExcelTemplateParser {
             if (row != null) {
                 String itemName = null;
                 Double itemPrice = null;
-                Date itemExpireDate = null;
+                String itemExpireDate = null;
                 String itemProducer = null;
 
                 try {
-                    CellType cellType;
-
-                    itemName = row.getCell(0).getStringCellValue();
-                    cellType = row.getCell(1).getCellTypeEnum();
-                    switch (cellType) {
-                        case STRING:
-                            itemPrice = Double.valueOf(row.getCell(1).getStringCellValue().split(",")[0].replaceAll("[^0-9]", ""));
-                            break;
-                        default:
-                            itemPrice = row.getCell(1).getNumericCellValue();
-                    }
-
-                    itemProducer = row.getCell(3).getStringCellValue();
-
-                    cellType = row.getCell(2).getCellTypeEnum();
-                    switch (cellType) {
-                        case STRING:
-                            itemExpireDate = simpleDateFormat.parse(row.getCell(2).getStringCellValue());
-                            break;
-                        default:
-                            itemExpireDate = row.getCell(2).getDateCellValue();
-                    }
+                    itemName = dataFormatter.formatCellValue(row.getCell(0));
+                    itemPrice = getPriceFromCell(row.getCell(1));
+                    itemProducer = dataFormatter.formatCellValue(row.getCell(3));
+                    itemExpireDate = dataFormatter.formatCellValue(row.getCell(2));
 
                 } catch (NullPointerException ex) {
                     rowNumber++;
                     continue;
-//                    if (itemName == null) {
-//                        throw new DistributorFileParsingException("Название номенклатуры на " + row.getRowNum() + " строке пустой, пожалуйста заполните все данные и загрузите "+distributorFile.getName()+" файл снова!");
-//                    } else if (itemPrice == null) {
-//                        throw new DistributorFileParsingException("Цена продукта на " + row.getRowNum() + " строке пустой, пожалуйста заполните все данные и загрузите "+distributorFile.getName()+"  файл снова!");
-//                    }else {
-//                       throw new DistributorFileParsingException("Файл содержит пустые ячейки на "+row.getRowNum()+" строке, пожалуйста заполните все данные и загрузите "+distributorFile.getName()+"  файл снова!");
-//                    }
                 } catch (IllegalStateException ex) {
                     System.out.println(ex.getMessage());
-                } catch (ParseException e) {
-                    itemExpireDate = null;
-                    System.out.println(e.getMessage());
                 }
                 item = new Item(
                         itemName
@@ -105,7 +78,7 @@ public class ExcelTemplateParser {
                         , itemExpireDate
                         , itemProducer
                 );
-                if (item.getName().length() != 0) {
+                if (item.getName().length() != 0&& item.getPrice() != null) {
                     items.add(item);
                 }
                 rowNumber++;
@@ -117,5 +90,19 @@ public class ExcelTemplateParser {
             throw new DistributorFileParsingException(distributorFile.getName() + " пустой, пожалуйста заполните все данные и загрузите файл снова!");
         distributor = new Distributor(distributorName, items);
         return distributor;
+    }
+    
+    
+    private Double getPriceFromCell(Cell cell){
+        DataFormatter dateFormatter = new DataFormatter();
+        switch (cell.getCellType()) {
+            case Cell.CELL_TYPE_STRING:
+                String price = dateFormatter.formatCellValue(cell);
+                return Double.valueOf(price);
+            case Cell.CELL_TYPE_NUMERIC:
+                    return cell.getNumericCellValue();
+            default:
+                return cell.getNumericCellValue();
+        }
     }
 }

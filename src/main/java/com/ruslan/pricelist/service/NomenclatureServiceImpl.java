@@ -18,7 +18,7 @@ public class NomenclatureServiceImpl implements NomenclatureService {
     private List<Nomenclature> nomenclatures ;
 
     @Override
-    public List<Nomenclature> getNomenclatures() throws IOException {
+    public List<Nomenclature> getNomenclaturesFromFile() throws IOException {
         nomenclatures = NomenclatureParser.getNomenclaturesFromFile();
         return nomenclatures;
     }
@@ -58,17 +58,23 @@ public class NomenclatureServiceImpl implements NomenclatureService {
 
     @Override
     public void generateNomenclaturesByPriceLists(List<Distributor> allDistributors) throws Exception {
-            if (nomenclatures != null)
-                removeAllNomenclatures();
+            if (this.nomenclatures != null)
+                this.nomenclatures.clear();
             else
-                nomenclatures = new ArrayList<>();
-            nomenclatures.clear();
-
+                this.nomenclatures = new ArrayList<>();
             for (Distributor distributor : allDistributors) {
-                nomenclatures.addAll(converter(distributor.getPriceList()));
+                List<Nomenclature> disNomenclature = converter(distributor.getPriceList());
+                for (Nomenclature nomenclature : disNomenclature) {
+                    if(!this.nomenclatures.contains(nomenclature)){
+                        this.nomenclatures.add(nomenclature);
+                    }
+                }
             }
-            nomenclatures.forEach(this::addNomenclature);
+    }
 
+    @Override
+    public List<Nomenclature> getNomenclatures() {
+        return nomenclatures;
     }
 
     private List<Nomenclature> converter(List<Item> items){

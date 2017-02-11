@@ -10,7 +10,10 @@ import java.util.List;
  * Created by Ruslan on 12/28/2016.
  */
 public interface NomenclatureService {
-    public List<Nomenclature> getNomenclatures() throws IOException;
+
+    public List<Nomenclature> getNomenclaturesFromFile() throws IOException;
+
+    public List<Nomenclature> getNomenclatures() ;
 
     public void addNomenclature(Nomenclature nomenclatureName);
 

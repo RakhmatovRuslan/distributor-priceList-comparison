@@ -27,7 +27,7 @@ public class StringComparisonUtility {
     //
     public static boolean isSame(String nomenclatureName, String itemName) {
         //TODO make difference coefficient configurable
-        Double diffCoefficient = 25.0;
+        Double diffCoefficient = 10.0;
         int levenchteinDistance = levenshteinDistance(nomenclatureName, itemName);
         double difference = 0.0;
         if (itemName.length() >= levenchteinDistance) {
